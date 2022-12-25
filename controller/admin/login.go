@@ -3,6 +3,7 @@ package admin
 import (
 	"MiShop/logger"
 	"MiShop/logic"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -24,12 +25,18 @@ func LoginControllerCaptcha(c *gin.Context) {
 func DoLoginController(c *gin.Context) {
 	captchID := c.PostForm("captchaId")
 	vertifyValue := c.PostForm("verifyValue")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+	pass := logic.Md5(password)
 	if flag := logic.VertifyCaptcha(captchID, vertifyValue); flag == true {
-		c.String(http.StatusOK, "验证成功")
+		logic.Login(username, pass, c)
 	} else {
-		c.String(http.StatusOK, "验证失败")
+		logic.ErrorReply(c, "验证失败", "/admin/login")
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "successful",
-	})
+}
+func LogOutController(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Delete("userInfo")
+	session.Save()
+	logic.SuccessReply(c, "登出成功", "/admin/login")
 }
