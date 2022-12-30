@@ -10,6 +10,8 @@ func AdminRouters(r *gin.Engine) {
 	AdminGroups := r.Group("/admin", midwares.InitAdminAuthMiddleware)
 	AdminGroups.GET("/", admin.MainController)
 	AdminGroups.GET("/welcome", admin.WelcomeController)
+	AdminGroups.GET("/changeStatus", admin.ChangeController)
+	AdminGroups.GET("/changeNum", admin.ChangeNumController)
 
 	AdminGroups.GET("/login", admin.LoginControllerIndex)
 	AdminGroups.GET("/captcha", admin.LoginControllerCaptcha)
@@ -25,7 +27,9 @@ func AdminRouters(r *gin.Engine) {
 
 	AdminGroups.GET("/focus", admin.FocusController)
 	AdminGroups.GET("/focus/add", admin.FocusAddController)
+	AdminGroups.POST("/focus/doAdd", admin.FocusDoAddController)
 	AdminGroups.GET("/focus/edit", admin.FocusEditController)
+	AdminGroups.POST("/focus/doEdit", admin.FocusDoEditController)
 	AdminGroups.GET("/focus/delete", admin.FocusDeleteController)
 
 	AdminGroups.GET("/role", admin.RoleController)
@@ -34,5 +38,14 @@ func AdminRouters(r *gin.Engine) {
 	AdminGroups.GET("/role/edit", admin.RoleEditController)
 	AdminGroups.POST("/role/doEdit", admin.RoleDoEditController)
 	AdminGroups.GET("/role/delete", admin.RoleDeleteController)
+	AdminGroups.GET("/role/auth", admin.RoleAuthController)
+	AdminGroups.POST("/role/doAuth", admin.RoleDoAuthController)
+
+	AdminGroups.GET("/access", admin.AccessController)
+	AdminGroups.GET("/access/add", admin.AccessAddController)
+	AdminGroups.POST("/access/doAdd", admin.AccessDoAddController)
+	AdminGroups.GET("/access/edit", admin.AccessEditController)
+	AdminGroups.POST("/access/doEdit", admin.AccessDoEditController)
+	AdminGroups.GET("/access/delete", admin.AccessDeleteController)
 
 }

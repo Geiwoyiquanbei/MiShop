@@ -4,7 +4,6 @@ import (
 	"MiShop/dao/mysql"
 	"MiShop/logic"
 	"MiShop/models"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -14,11 +13,9 @@ import (
 func ManagerController(c *gin.Context) {
 	managerList := []models.Manager{}
 	mysql.DB.Preload("Role").Find(&managerList)
-	fmt.Printf("%#v", managerList)
 	c.HTML(http.StatusOK, "admin/manager/index.html", gin.H{
 		"managerList": managerList,
 	})
-
 }
 func ManagerAddController(c *gin.Context) {
 	//获取所有的角色
@@ -28,7 +25,6 @@ func ManagerAddController(c *gin.Context) {
 		"roleList": roleList,
 	})
 }
-
 func ManagerDoAddController(c *gin.Context) {
 	roleId, err1 := strconv.Atoi(c.PostForm("role_id"))
 	if err1 != nil {
@@ -44,7 +40,6 @@ func ManagerDoAddController(c *gin.Context) {
 		logic.ErrorReply(c, "用户名或者密码的长度不合法", "/admin/manager/add")
 		return
 	}
-
 	//判断管理是否存在
 	managerList := []models.Manager{}
 	mysql.DB.Where("username=?", username).Find(&managerList)
@@ -114,7 +109,6 @@ func ManagerDoEditController(c *gin.Context) {
 	manager.RoleId = roleId
 
 	//注意：判断密码是否为空 为空表示不修改密码 不为空表示修改密码
-
 	if password != "" {
 		//判断密码长度是否合法
 		if len(password) < 6 {

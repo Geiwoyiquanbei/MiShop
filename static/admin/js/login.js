@@ -1,7 +1,7 @@
 $(function(){
-    app.init();
+    loginApp.init();
 })
-var app={
+var loginApp={
     init:function(){
         this.getCaptcha()
         this.captchaImgChage()
