@@ -4,7 +4,6 @@ import (
 	"MiShop/dao/mysql"
 	"MiShop/models"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -25,7 +24,7 @@ func MainController(c *gin.Context) {
 		//2、获取所有的权限
 		accessList := []models.Access{}
 		mysql.DB.Where("module_id=?", 0).Preload("AccessItem", func(db *gorm.DB) *gorm.DB {
-			return db.Order("access.order DESC")
+			return db.Order("access.sort DESC")
 		}).Order("sort DESC").Find(&accessList)
 		//3、获取当前角色拥有的权限 ，并把权限id放在一个map对象里面
 		roleAccess := []models.RoleAccess{}
@@ -45,7 +44,6 @@ func MainController(c *gin.Context) {
 				}
 			}
 		}
-		fmt.Printf("%#v", accessList)
 		c.HTML(http.StatusOK, "admin/main/index.html", gin.H{
 			"username":   userinfoStruct[0].Username,
 			"accessList": accessList,
@@ -59,7 +57,7 @@ func MainController(c *gin.Context) {
 func WelcomeController(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin/main/welcome.html", gin.H{})
 }
-func ChangeController(c *gin.Context) {
+func ChangeStatusController(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -68,14 +66,10 @@ func ChangeController(c *gin.Context) {
 		})
 		return
 	}
-
 	table := c.Query("table")
 	field := c.Query("field")
-
 	// status = ABS(0-1)   1
-
 	// status = ABS(1-1)  0
-
 	err1 := mysql.DB.Exec("update "+table+" set "+field+"=ABS("+field+"-1) where id=?", id).Error
 	if err1 != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -99,7 +93,6 @@ func ChangeNumController(c *gin.Context) {
 	field := c.Query("field")
 	num := c.Query("num")
 	err1 := mysql.DB.Exec("update "+table+" set "+field+"="+num+" where id=?", id).Error
-	fmt.Println(err1)
 	if err1 != nil {
 		c.JSON(http.StatusOK, gin.H{"success": false, "message": "修改数量失败"})
 		return

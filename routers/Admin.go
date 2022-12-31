@@ -10,7 +10,7 @@ func AdminRouters(r *gin.Engine) {
 	AdminGroups := r.Group("/admin", midwares.InitAdminAuthMiddleware)
 	AdminGroups.GET("/", admin.MainController)
 	AdminGroups.GET("/welcome", admin.WelcomeController)
-	AdminGroups.GET("/changeStatus", admin.ChangeController)
+	AdminGroups.GET("/changeStatus", admin.ChangeStatusController)
 	AdminGroups.GET("/changeNum", admin.ChangeNumController)
 
 	AdminGroups.GET("/login", admin.LoginControllerIndex)
@@ -47,5 +47,26 @@ func AdminRouters(r *gin.Engine) {
 	AdminGroups.GET("/access/edit", admin.AccessEditController)
 	AdminGroups.POST("/access/doEdit", admin.AccessDoEditController)
 	AdminGroups.GET("/access/delete", admin.AccessDeleteController)
+
+	AdminGroups.GET("/goodsCate", admin.GoodsCateController)
+	AdminGroups.GET("/goodsCate/add", admin.GoodsCateAddController)
+	AdminGroups.POST("/goodsCate/doAdd", admin.GoodsCateDoAddController)
+	AdminGroups.GET("/goodsCate/edit", admin.GoodsCateEditController)
+	AdminGroups.POST("/goodsCate/doEdit", admin.GoodsCateDoEditController)
+	AdminGroups.GET("/goodsCate/delete", admin.GoodsCateDeleteController)
+
+	AdminGroups.GET("/goodsType", admin.GoodsTypeController)
+	AdminGroups.GET("/goodsType/add", admin.GoodsTypeAddController)
+	AdminGroups.POST("/goodsType/doAdd", admin.GoodsTypeDoAddController)
+	AdminGroups.GET("/goodsType/edit", admin.GoodsTypeEditController)
+	AdminGroups.POST("/goodsType/doEdit", admin.GoodsTypeDoEditController)
+	AdminGroups.GET("/goodsType/delete", admin.GoodsTypeDeleteController)
+
+	AdminGroups.GET("/goodsTypeAttribute", admin.GoodsTypeAttributeController)
+	AdminGroups.GET("/goodsTypeAttribute/add", admin.GoodsTypeAttributeAddController)
+	AdminGroups.POST("/goodsTypeAttribute/doAdd", admin.GoodsTypeAttributeDoAddControllerDoAdd)
+	AdminGroups.GET("/goodsTypeAttribute/edit", admin.GoodsTypeAttributeEditController)
+	AdminGroups.POST("/goodsTypeAttribute/doEdit", admin.GoodsTypeAttributeDoEditController)
+	AdminGroups.GET("/goodsTypeAttribute/delete", admin.GoodsTypeAttributeDeleteController)
 
 }

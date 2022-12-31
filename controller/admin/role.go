@@ -4,7 +4,6 @@ import (
 	"MiShop/dao/mysql"
 	"MiShop/logic"
 	"MiShop/models"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -41,7 +40,6 @@ func RoleDoAddController(c *gin.Context) {
 }
 func RoleEditController(c *gin.Context) {
 	value := c.Query("id")
-	fmt.Println(value)
 	id, err := strconv.Atoi(value)
 	if err != nil {
 		logic.ErrorReply(c, "参数错误", "/admin/role")
@@ -142,7 +140,6 @@ func RoleDoAuthController(c *gin.Context) {
 		roleAccess.AccessId = accessId
 		mysql.DB.Create(&roleAccess)
 	}
-	fmt.Println("/admin/role/auth?id=?" + strconv.Itoa(roleId))
 	// c.String(200, "DoAuth")
 	// admin/role/auth?id=9
 	logic.SuccessReply(c, "授权成功", "/admin/role/auth?id="+strconv.Itoa(roleId))
