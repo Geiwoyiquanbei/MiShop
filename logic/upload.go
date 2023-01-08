@@ -3,11 +3,17 @@ package logic
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"os"
 	"path"
 	"strconv"
 	"time"
 )
+
+func Float(str string) (float64, error) {
+	flo, err := strconv.ParseFloat(str, 64)
+	return flo, err
+}
 
 //时间戳转换成日期
 func UnixToTime(timestamp int) string {
@@ -29,6 +35,9 @@ func DateToUnix(str string) int64 {
 func GetUnix() int64 {
 	return time.Now().Unix()
 }
+func GetUnixNano() int64 {
+	return time.Now().UnixNano()
+}
 
 //获取当前的日期
 func GetDate() string {
@@ -41,7 +50,7 @@ func GetDay() string {
 	template := "20060102"
 	return time.Now().Format(template)
 }
-func UpLoad(c *gin.Context, imgName string) (string, error) {
+func UpLoadImg(c *gin.Context, imgName string) (string, error) {
 	formFile, err := c.FormFile(imgName)
 	file := formFile
 	if err != nil {
@@ -63,11 +72,16 @@ func UpLoad(c *gin.Context, imgName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fileName := strconv.FormatInt(GetUnix(), 10) + extName
+	fileName := strconv.FormatInt(GetUnixNano(), 10) + extName
 	dst := path.Join(dir, fileName)
 	err = c.SaveUploadedFile(file, dst)
 	if err != nil {
 		return "", err
 	}
 	return dst, nil
+}
+
+//把字符串解析成html
+func Str2Html(str string) template.HTML {
+	return template.HTML(str)
 }

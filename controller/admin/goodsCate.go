@@ -42,7 +42,7 @@ func GoodsCateDoAddController(c *gin.Context) {
 		logic.ErrorReply(c, "排序值必须是整数", "/goodsCate/add")
 		return
 	}
-	cateImgDir, _ := logic.UpLoad(c, "cate_img")
+	cateImgDir, _ := logic.UpLoadImg(c, "cate_img")
 	goodsCate := models.GoodsCate{
 		Title:       title,
 		Pid:         pid,
@@ -102,7 +102,7 @@ func GoodsCateDoEditController(c *gin.Context) {
 		logic.ErrorReply(c, "排序值必须是整数", "/goodsCate/add")
 		return
 	}
-	cateImgDir, _ := logic.UpLoad(c, "cate_img")
+	cateImgDir, _ := logic.UpLoadImg(c, "cate_img")
 	goodsCate := models.GoodsCate{Id: id}
 	mysql.DB.Find(&goodsCate)
 	goodsCate.Title = title

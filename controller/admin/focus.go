@@ -33,7 +33,7 @@ func FocusDoAddController(c *gin.Context) {
 		logic.ErrorReply(c, "请输入正确的排序值", "/admin/focus/add")
 	}
 	//上传文件
-	focusImgSrc, err4 := logic.UpLoad(c, "focus_img")
+	focusImgSrc, err4 := logic.UpLoadImg(c, "focus_img")
 	if err4 != nil {
 		fmt.Println(err4)
 	}
@@ -81,7 +81,7 @@ func FocusDoEditController(c *gin.Context) {
 		logic.ErrorReply(c, "请输入正确的排序值", "/admin/focus/edit?id="+strconv.Itoa(id))
 	}
 	//上传文件
-	focusImg, _ := logic.UpLoad(c, "focus_img")
+	focusImg, _ := logic.UpLoadImg(c, "focus_img")
 	focus := models.Focus{Id: id}
 	mysql.DB.Find(&focus)
 	focus.Title = title
@@ -100,7 +100,7 @@ func FocusDoEditController(c *gin.Context) {
 	}
 }
 func FocusDeleteController(c *gin.Context) {
-	id, err :=strconv.Atoi(c.Query("id"))
+	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		logic.ErrorReply(c, "传入数据错误", "/admin/focus")
 	} else {
