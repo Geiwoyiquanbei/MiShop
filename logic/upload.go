@@ -4,9 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/tencentyun/cos-go-sdk-v5"
-	"gopkg.in/ini.v1"
 	"html/template"
 	"mime/multipart"
 	"net/http"
@@ -15,6 +12,10 @@ import (
 	"path"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/tencentyun/cos-go-sdk-v5"
+	"gopkg.in/ini.v1"
 )
 
 func Float(str string) (float64, error) {
@@ -106,13 +107,13 @@ func CosUpLoadImg(c *gin.Context, imgName string) (string, error) {
 func CosUpLoad(file *multipart.FileHeader, dst string) (string, error) {
 	//将<bucket>和<region>修改为真实的信息
 	//bucket的命名规则为{name}-{appid} ，此处填写的存储桶名称必须为此格式
-	u, _ := url.Parse("https://mishop-1315397277.cos.ap-nanjing.myqcloud.com")
+	u, _ := url.Parse("")
 	b := &cos.BaseURL{BucketURL: u}
 	c := cos.NewClient(b, &http.Client{
 		Transport: &cos.AuthorizationTransport{
 			//如实填写账号和密钥，也可以设置为环境变量
-			SecretID:  os.Getenv("AKIDfDciieYIrBHA4rTmwvhmkV1IMDoCLMCq"),
-			SecretKey: os.Getenv("V1LabS8ctwxuV0KRK2ayOn02pPo22EDN"),
+			SecretID:  os.Getenv(""),
+			SecretKey: os.Getenv(""),
 		},
 	})
 	f, _ := file.Open()
