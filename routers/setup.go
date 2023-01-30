@@ -13,6 +13,7 @@ func SetUp(r *gin.Engine) {
 	r.SetFuncMap(template.FuncMap{
 		"UnixToTime": logic.UnixToTime,
 		"Str2Html":   logic.Str2Html,
+		"FormatImg":  logic.FormatImg,
 	})
 	//加载模板 放在配置路由前面
 	r.LoadHTMLGlob("templates/**/**/*")
@@ -23,4 +24,5 @@ func SetUp(r *gin.Engine) {
 	//配置session的中间件 store是前面创建的存储引擎，我们可以替换成其他存储引擎
 	r.Use(sessions.Sessions("mysession", store))
 	AdminRouters(r)
+	FrontRouters(r)
 }

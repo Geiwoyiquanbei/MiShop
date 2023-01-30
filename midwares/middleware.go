@@ -4,7 +4,6 @@ import (
 	"MiShop/dao/mysql"
 	"MiShop/models"
 	"encoding/json"
-	"fmt"
 	"gopkg.in/ini.v1"
 	"strings"
 
@@ -23,7 +22,6 @@ func InitAdminAuthMiddleware(c *gin.Context) {
 	// 2、获取Session里面保存的用户信息
 	session := sessions.Default(c)
 	userinfo := session.Get("userInfo")
-	fmt.Println(userinfo)
 	//类型断言 来判断 userinfo是不是一个string
 	userinfoStr, ok := userinfo.(string)
 	if ok {

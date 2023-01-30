@@ -70,12 +70,24 @@ func AdminRouters(r *gin.Engine) {
 	AdminGroups.GET("/goodsTypeAttribute/delete", admin.GoodsTypeAttributeDeleteController)
 
 	AdminGroups.GET("/goods", admin.GoodsController)
+	AdminGroups.GET("/goods/delete", admin.DeleteController)
 	AdminGroups.GET("/goods/add", admin.GoodsAddController)
 	AdminGroups.POST("/goods/doAdd", admin.GoodsDoAddController)
 	AdminGroups.GET("/goods/goodsTypeAttribute", admin.GoodsTypeAttrController)
 	AdminGroups.GET("/goods/edit", admin.GoodsEditController)
 	AdminGroups.POST("/goods/doEdit", admin.GoodsDoEditController)
-	AdminGroups.POST("/goods/imageUpload", admin.ImageUpload)
+	AdminGroups.POST("/goods/goodsImageUpload", admin.GoodsImageUpload)
+	AdminGroups.POST("/goods/editorImageUpload", admin.EditorImageUpload)
 	AdminGroups.GET("/goods/changeGoodsImageColor", admin.ChangeGoodsImageColor)
 	AdminGroups.GET("/goods/removeGoodsImage", admin.RemoveGoodsImage)
+
+	AdminGroups.GET("/nav", admin.NavController)
+	AdminGroups.GET("/nav/add", admin.NavAddController)
+	AdminGroups.POST("/nav/doAdd", admin.NavDoAddController)
+	AdminGroups.GET("/nav/edit", admin.NavEditController)
+	AdminGroups.POST("/nav/doEdit", admin.NavDoEditController)
+	AdminGroups.GET("/nav/delete", admin.NavDeleteController)
+
+	AdminGroups.GET("/setting", admin.SettingController)
+	AdminGroups.POST("/setting/doEdit", admin.SettingDoEditController)
 }

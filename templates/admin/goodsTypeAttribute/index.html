@@ -4,8 +4,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="panel panel-default">
-            <div class="panel-heading">
-             {{.goodsType.Title}}   <a href="/admin/goodsTypeAttribute/add?cate_id={{.cateId}}" class="btn btn-primary">增加类型属性</a>
+            <div class="panel-heading clear">
+                <span>类型----{{.goodsType.Title}}</span>   <a href="/admin/goodsTypeAttribute/add?cate_id={{.cateId}}" class="btn btn-primary fr">增加商品类型属性</a>
             </div>
             <!--
                 列表展示
@@ -23,6 +23,7 @@
                             <th class="text-center">状态</th>
                             <th class="text-center">操作</th>
                         </tr>
+                        
                     </thead>
                     <tbody>
                         {{$cateTitle := .goodsType.Title}}
@@ -40,7 +41,7 @@
                                 {{end}}
                             </td>
                             <td>{{$value.AttrValue}}</td>
-                            <td>{{$value.AddTime}}</td>
+                            <td>{{UnixToTime $value.AddTime}}</td>
                             <td>
                                 <span class="chSpanNum" data-id="{{$value.Id}}" data-table="goods_type_attribute" data-field="sort">{{$value.Sort}}</span>
                             </td>
@@ -60,7 +61,7 @@
                                     href="/admin/goodsTypeAttribute/edit?id={{$value.Id}}" >修改</a>
                                 　
                                 <a class="delete"
-                                    href="/admin/goodsTypeAttribute/delete?id={{$value.Id}}" >删除</a>
+                                    href="/admin/goodsTypeAttribute/delete?id={{$value.Id}}&cate_id={{$value.CateId}}" >删除</a>
                             </td>
                         </tr>
                         {{end}}

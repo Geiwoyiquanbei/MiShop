@@ -1,9 +1,16 @@
 package logic
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/tencentyun/cos-go-sdk-v5"
+	"gopkg.in/ini.v1"
 	"html/template"
+	"mime/multipart"
+	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -50,11 +57,77 @@ func GetDay() string {
 	template := "20060102"
 	return time.Now().Format(template)
 }
+
+//获取Oss的状态
+func GetOssStatus() int {
+	config, iniErr := ini.Load("./conf/app.ini")
+	if iniErr != nil {
+		fmt.Printf("Fail to read file: %v", iniErr)
+		os.Exit(1)
+	}
+	ossStatus, _ := strconv.Atoi(config.Section("oss").Key("status").String())
+	return ossStatus
+}
+
 func UpLoadImg(c *gin.Context, imgName string) (string, error) {
+	ossStatus := GetOssStatus()
+	if ossStatus == 1 {
+		return CosUpLoadImg(c, imgName)
+	} else {
+		return LocalUpLoadImg(c, imgName)
+	}
+}
+
+func CosUpLoadImg(c *gin.Context, imgName string) (string, error) {
 	formFile, err := c.FormFile(imgName)
 	file := formFile
 	if err != nil {
-		c.String(200, "上传失败")
+		return "", err
+	}
+	extName := path.Ext(file.Filename)
+	extNameMap := make(map[string]bool)
+	extNameMap[".jpg"] = true
+	extNameMap[".png"] = true
+	extNameMap[".gif"] = true
+	extNameMap[".jpeg"] = true
+	if _, ok := extNameMap[extName]; !ok {
+		return "", errors.New("文件后缀名不合法")
+	}
+	day := GetDay()
+	dir := "./static/upload/" + day
+	fileName := strconv.FormatInt(GetUnixNano(), 10) + extName
+	dst := path.Join(dir, fileName)
+	dst, err = CosUpLoad(file, dst)
+	if err != nil {
+		return "", err
+	}
+	return dst, nil
+}
+func CosUpLoad(file *multipart.FileHeader, dst string) (string, error) {
+	//将<bucket>和<region>修改为真实的信息
+	//bucket的命名规则为{name}-{appid} ，此处填写的存储桶名称必须为此格式
+	u, _ := url.Parse("https://mishop-1315397277.cos.ap-nanjing.myqcloud.com")
+	b := &cos.BaseURL{BucketURL: u}
+	c := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			//如实填写账号和密钥，也可以设置为环境变量
+			SecretID:  os.Getenv("AKIDfDciieYIrBHA4rTmwvhmkV1IMDoCLMCq"),
+			SecretKey: os.Getenv("V1LabS8ctwxuV0KRK2ayOn02pPo22EDN"),
+		},
+	})
+	f, _ := file.Open()
+	_, err := c.Object.Put(context.Background(), dst, f, nil)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+	return dst, nil
+}
+
+func LocalUpLoadImg(c *gin.Context, imgName string) (string, error) {
+	formFile, err := c.FormFile(imgName)
+	file := formFile
+	if err != nil {
 		return "", err
 	}
 	extName := path.Ext(file.Filename)
@@ -84,4 +157,15 @@ func UpLoadImg(c *gin.Context, imgName string) (string, error) {
 //把字符串解析成html
 func Str2Html(str string) template.HTML {
 	return template.HTML(str)
+}
+
+//格式化输出图片
+func FormatImg(str string) string {
+	ossStatus := GetOssStatus()
+	config, _ := ini.Load("./conf/app.ini")
+	if ossStatus == 1 {
+		return config.Section("oss").Key("CosDomain").String() + str
+	} else {
+		return "/" + str
+	}
 }

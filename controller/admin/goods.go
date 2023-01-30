@@ -6,6 +6,8 @@ import (
 	"MiShop/models"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"gopkg.in/ini.v1"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -15,11 +17,50 @@ import (
 var wg sync.WaitGroup
 
 func GoodsController(c *gin.Context) {
+
+	//条件
+	where := "is_delete=0"
+	//获取keyword
+	keyword := c.Query("keyword")
+	if len(keyword) > 0 {
+		where += " AND title like \"%" + keyword + "%\""
+	}
+	// nis_delete=0 AND title like "%小米%"
+	//当前页数
+	page, _ := strconv.Atoi(c.Query("page"))
+	if page == 0 {
+		page = 1
+	}
+	//每页查询的数量
+	pageSize := 5
 	goodsList := []models.Goods{}
-	mysql.DB.Find(&goodsList)
-	c.HTML(http.StatusOK, "admin/goods/index.html", gin.H{
-		"goodsList": goodsList,
-	})
+	mysql.DB.Where(where).Offset((page - 1) * pageSize).Limit(pageSize).Find(&goodsList)
+
+	//获取总数量
+	var count int64
+	mysql.DB.Table("goods").Count(&count)
+	//判断最后一页有没有数据 如果没有跳转到第一页
+	if len(goodsList) > 0 {
+		c.HTML(http.StatusOK, "admin/goods/index.html", gin.H{
+			"goodsList": goodsList,
+			//注意float64类型
+			"totalPages": math.Ceil(float64(count) / float64(pageSize)),
+			"page":       page,
+			"keyword":    keyword,
+		})
+	} else {
+		if page != 1 {
+			c.Redirect(302, "/admin/goods")
+		} else {
+			c.HTML(http.StatusOK, "admin/goods/index.html", gin.H{
+				"goodsList": goodsList,
+				//注意float64类型
+				"totalPages": math.Ceil(float64(count) / float64(pageSize)),
+				"page":       page,
+				"keyword":    keyword,
+			})
+		}
+	}
 }
 func GoodsAddController(c *gin.Context) {
 	//获取商品分类
@@ -176,7 +217,7 @@ func GoodsDoAddController(c *gin.Context) {
 	logic.SuccessReply(c, "增加数据成功", "/admin/goods")
 }
 func GoodsEditController(c *gin.Context) {
-
+	prevPage := c.Request.Referer()
 	// 1、获取要修改的商品数据
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
@@ -250,6 +291,7 @@ func GoodsEditController(c *gin.Context) {
 		"goodsTypeList":  goodsTypeList,
 		"goodsAttrStr":   goodsAttrStr,
 		"goodsImageList": goodsImageList,
+		"prevPage":       prevPage,
 	})
 }
 func GoodsDoEditController(c *gin.Context) {
@@ -258,6 +300,7 @@ func GoodsDoEditController(c *gin.Context) {
 	if err1 != nil {
 		logic.ErrorReply(c, "传入参数错误", "/admin/goods")
 	}
+	prevPage := c.PostForm(("prevPage"))
 	title := c.PostForm("title")
 	subTitle := c.PostForm("sub_title")
 	goodsSn := c.PostForm("goods_sn")
@@ -374,9 +417,40 @@ func GoodsDoEditController(c *gin.Context) {
 		wg.Done()
 	}()
 	wg.Wait()
-	logic.SuccessReply(c, "修改数据成功", "/admin/goods")
+	if len(prevPage) > 0 {
+		logic.SuccessReply(c, "修改数据成功", prevPage)
+	} else {
+		logic.SuccessReply(c, "修改数据成功", "/admin/goods")
+	}
+
 }
-func ImageUpload(c *gin.Context) {
+
+//富文本编辑器
+func EditorImageUpload(c *gin.Context) {
+	//上传图片
+	imgDir, err := logic.UpLoadImg(c, "file") //注意：可以在网络里面看到传递的参数
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"link": "",
+		})
+	} else {
+		if logic.GetOssStatus() != 1 {
+			c.JSON(http.StatusOK, gin.H{
+				"link": "/" + imgDir,
+			})
+		} else {
+			config, err := ini.Load("./conf/app.ini")
+			if err != nil {
+				fmt.Println(err)
+			}
+			c.JSON(http.StatusOK, gin.H{
+				"link": config.Section("oss").Key("CosDomain").String() + imgDir,
+			})
+		}
+	}
+}
+
+func GoodsImageUpload(c *gin.Context) {
 	//上传图片
 	imgDir, err := logic.UpLoadImg(c, "file") //注意：可以在网络里面看到传递的参数
 	if err != nil {
@@ -385,7 +459,7 @@ func ImageUpload(c *gin.Context) {
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
-			"link": "/" + imgDir,
+			"link": imgDir,
 		})
 	}
 }
@@ -431,6 +505,29 @@ func RemoveGoodsImage(c *gin.Context) {
 			"result":  "删除成功",
 			"success": true,
 		})
+	}
+
+}
+
+//删除数据
+func DeleteController(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		logic.ErrorReply(c, "传入数据错误", "/admin/goods")
+	} else {
+		goods := models.Goods{Id: id}
+		mysql.DB.Find(&goods)
+		goods.IsDelete = 1
+		goods.Status = 0
+		mysql.DB.Save(&goods)
+		//获取上一页
+		prevPage := c.Request.Referer()
+		if len(prevPage) > 0 {
+			logic.SuccessReply(c, "删除数据成功", prevPage)
+		} else {
+			logic.SuccessReply(c, "删除数据成功", "/admin/goods")
+		}
+
 	}
 
 }
