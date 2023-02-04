@@ -170,3 +170,29 @@ func FormatImg(str string) string {
 		return "/" + str
 	}
 }
+
+func Sub(a int, b int) int {
+	return a - b
+}
+
+func SubStr(str string, start int, end int) string {
+	len := len(str)
+	if start < 0 {
+		start = 0
+	}
+	if start > len {
+		start = 0
+	}
+
+	if end < 0 {
+		end = len
+	}
+	if end > len {
+		end = len
+	}
+	if start > end {
+		start, end = end, start
+	}
+
+	return str[start:end]
+}

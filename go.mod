@@ -7,7 +7,6 @@ require (
 	github.com/gin-gonic/gin v1.8.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/mojocn/base64Captcha v1.3.5
-	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.41
 	go.uber.org/zap v1.24.0
 	gopkg.in/ini.v1 v1.67.0

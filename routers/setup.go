@@ -14,6 +14,8 @@ func SetUp(r *gin.Engine) {
 		"UnixToTime": logic.UnixToTime,
 		"Str2Html":   logic.Str2Html,
 		"FormatImg":  logic.FormatImg,
+		"Sub":        logic.Sub,
+		"Substr":     logic.SubStr,
 	})
 	//加载模板 放在配置路由前面
 	r.LoadHTMLGlob("templates/**/**/*")

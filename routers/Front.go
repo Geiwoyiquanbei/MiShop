@@ -1,13 +1,13 @@
 package routers
 
 import (
-	"MiShop/controller/front"
+	"MiShop/controller/itying"
 	"github.com/gin-gonic/gin"
 )
 
 func FrontRouters(r *gin.Engine) {
 	defaultRouters := r.Group("/")
 	{
-		defaultRouters.GET("/", front.Index)
+		defaultRouters.GET("/", itying.Index)
 	}
 }
