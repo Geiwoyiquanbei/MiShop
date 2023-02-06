@@ -13,7 +13,7 @@ type RedisStore struct {
 //实现设置captcha的方法
 func (r RedisStore) Set(id string, value string) error {
 	key := CAPTCHA + id
-	err := Client.Set(ctx, key, value, time.Minute*2).Err()
+	err := Client.Set(Ctx, key, value, time.Minute*2).Err()
 
 	return err
 }
@@ -21,13 +21,13 @@ func (r RedisStore) Set(id string, value string) error {
 //实现获取captcha的方法
 func (r RedisStore) Get(id string, clear bool) string {
 	key := CAPTCHA + id
-	val, err := Client.Get(ctx, key).Result()
+	val, err := Client.Get(Ctx, key).Result()
 	if err != nil {
 		fmt.Println(err)
 		return ""
 	}
 	if clear {
-		err := Client.Del(ctx, key).Err()
+		err := Client.Del(Ctx, key).Err()
 		if err != nil {
 			fmt.Println(err)
 			return ""

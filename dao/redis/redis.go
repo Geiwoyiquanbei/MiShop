@@ -11,7 +11,7 @@ var (
 	Client *redis.Client
 	Nil    = redis.Nil
 )
-var ctx = context.Background()
+var Ctx = context.Background()
 
 func RedisInit(conf *ini.File) (err error) {
 	port, _ := conf.Section("redis").Key("port").Int()
@@ -20,7 +20,7 @@ func RedisInit(conf *ini.File) (err error) {
 		Password: fmt.Sprintf("%s", conf.Section("redis").Key("password").String()),
 		DB:       0,
 	})
-	_, err = Client.Ping(ctx).Result()
+	_, err = Client.Ping(Ctx).Result()
 	if err != nil {
 		return err
 	}
