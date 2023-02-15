@@ -2,6 +2,8 @@ package admin
 
 import (
 	"MiShop/dao/mysql"
+	"MiShop/dao/redis"
+	"MiShop/logic"
 	"MiShop/models"
 	"encoding/json"
 	"github.com/gin-contrib/sessions"
@@ -98,5 +100,15 @@ func ChangeNumController(c *gin.Context) {
 		return
 	} else {
 		c.JSON(http.StatusOK, gin.H{"success": true, "message": "修改数量成功"})
+	}
+}
+
+func FlushAll(c *gin.Context) {
+	topNavList := []models.Nav{}
+	if hasTopNavList := redis.CacheDb.Get("topNavList", &topNavList); !hasTopNavList {
+		redis.Client.FlushAll(redis.Ctx)
+		logic.SuccessReply(c, "清除redis缓存成功", "/admin")
+	} else {
+		logic.ErrorReply(c, "清除redis缓存成功", "/admin")
 	}
 }

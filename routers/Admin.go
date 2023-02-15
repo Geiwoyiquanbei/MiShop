@@ -12,6 +12,7 @@ func AdminRouters(r *gin.Engine) {
 	AdminGroups.GET("/welcome", admin.WelcomeController)
 	AdminGroups.GET("/changeStatus", admin.ChangeStatusController)
 	AdminGroups.GET("/changeNum", admin.ChangeNumController)
+	AdminGroups.GET("/FlushAll", admin.FlushAll)
 
 	AdminGroups.GET("/login", admin.LoginControllerIndex)
 	AdminGroups.GET("/captcha", admin.LoginControllerCaptcha)

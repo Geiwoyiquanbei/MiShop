@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/gomarkdown/markdown"
 	"html/template"
 	"mime/multipart"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -175,6 +177,10 @@ func Sub(a int, b int) int {
 	return a - b
 }
 
+func Mul(a float64, num int) float64 {
+	return a * float64(num)
+}
+
 func SubStr(str string, start int, end int) string {
 	len := len(str)
 	if start < 0 {
@@ -195,4 +201,15 @@ func SubStr(str string, start int, end int) string {
 	}
 
 	return str[start:end]
+}
+
+func FormatAttr(str string) string {
+	tmpSlice := strings.Split(str, "\n")
+	var tmpStr string
+	for _, v := range tmpSlice {
+		md := []byte(v)
+		output := markdown.ToHTML(md, nil, nil)
+		tmpStr += tmpStr + string(output)
+	}
+	return tmpStr
 }

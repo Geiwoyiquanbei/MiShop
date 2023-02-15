@@ -16,6 +16,8 @@ func SetUp(r *gin.Engine) {
 		"FormatImg":  logic.FormatImg,
 		"Sub":        logic.Sub,
 		"Substr":     logic.SubStr,
+		"FormatAttr": logic.FormatAttr,
+		"Mul":        logic.Mul,
 	})
 	//加载模板 放在配置路由前面
 	r.LoadHTMLGlob("templates/**/**/*")
