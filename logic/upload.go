@@ -213,3 +213,8 @@ func FormatAttr(str string) string {
 	}
 	return tmpStr
 }
+func GetOrderId() string {
+	// 2022020312233
+	template := "20060102150405"
+	return time.Now().Format(template) + GetRandNum(4)
+}

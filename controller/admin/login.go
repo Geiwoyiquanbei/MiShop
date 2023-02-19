@@ -24,11 +24,11 @@ func LoginControllerCaptcha(c *gin.Context) {
 }
 func DoLoginController(c *gin.Context) {
 	captchID := c.PostForm("captchaId")
-	vertifyValue := c.PostForm("verifyValue")
+	verifyValue := c.PostForm("verifyValue")
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	pass := logic.Md5(password)
-	if flag := logic.VertifyCaptcha(captchID, vertifyValue); flag == true {
+	if flag := logic.VerifyCaptcha(captchID, verifyValue); flag == true {
 		logic.Login(username, pass, c)
 	} else {
 		logic.ErrorReply(c, "验证失败", "/admin/login")

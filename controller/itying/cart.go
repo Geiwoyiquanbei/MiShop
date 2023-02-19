@@ -12,7 +12,7 @@ import (
 func GetCart(c *gin.Context) {
 	//获取购物车数据 显示购物车数据
 	cartList := []models.Cart{}
-	models.Cookie.Get(c, "cartList", &cartList)
+	logic.Cookie.Get(c, "cartList", &cartList)
 	var allPrice float64
 	for i := 0; i < len(cartList); i++ {
 		if cartList[i].Checked {
@@ -83,7 +83,7 @@ func AddCart(c *gin.Context) {
 
 	// 2、判断购物车有没有数据   （cookie）
 	cartList := []models.Cart{}
-	models.Cookie.Get(c, "cartList", &cartList)
+	logic.Cookie.Get(c, "cartList", &cartList)
 	if len(cartList) > 0 {
 		//4、购物车有数据  判断购物车有没有当前数据
 		if logic.HasCartData(cartList, currentData) {
@@ -96,11 +96,11 @@ func AddCart(c *gin.Context) {
 			cartList = append(cartList, currentData)
 		}
 
-		models.Cookie.Set(c, "cartList", cartList)
+		logic.Cookie.Set(c, "cartList", cartList)
 	} else {
 		// 3、如果购物车没有任何数据  直接把当前数据写入cookie
 		cartList = append(cartList, currentData)
-		models.Cookie.Set(c, "cartList", cartList)
+		logic.Cookie.Set(c, "cartList", cartList)
 	}
 	c.Redirect(302, "/cart/successTip?goods_id="+strconv.Itoa(goodsId))
 }
@@ -142,7 +142,7 @@ func IncCart(c *gin.Context) {
 		}
 	} else {
 		cartList := []models.Cart{}
-		models.Cookie.Get(c, "cartList", &cartList)
+		logic.Cookie.Get(c, "cartList", &cartList)
 		if len(cartList) > 0 {
 			for i := 0; i < len(cartList); i++ {
 				if cartList[i].Id == goodsId && cartList[i].GoodsColor == goodsColor && cartList[i].GoodsAttr == GoodsAttr {
@@ -157,7 +157,7 @@ func IncCart(c *gin.Context) {
 
 			}
 			//重新写入数据
-			models.Cookie.Set(c, "cartList", cartList)
+			logic.Cookie.Set(c, "cartList", cartList)
 
 			response = gin.H{
 				"success":      true,
@@ -199,7 +199,7 @@ func DecCart(c *gin.Context) {
 		}
 	} else {
 		cartList := []models.Cart{}
-		models.Cookie.Get(c, "cartList", &cartList)
+		logic.Cookie.Get(c, "cartList", &cartList)
 		if len(cartList) > 0 {
 			for i := 0; i < len(cartList); i++ {
 				if cartList[i].Id == goodsId && cartList[i].GoodsColor == goodsColor && cartList[i].GoodsAttr == GoodsAttr {
@@ -216,7 +216,7 @@ func DecCart(c *gin.Context) {
 
 			}
 			//重新写入数据
-			models.Cookie.Set(c, "cartList", cartList)
+			logic.Cookie.Set(c, "cartList", cartList)
 
 			response = gin.H{
 				"success":      true,
@@ -251,7 +251,7 @@ func ChangeOneCart(c *gin.Context) {
 		}
 	} else {
 		cartList := []models.Cart{}
-		models.Cookie.Get(c, "cartList", &cartList)
+		logic.Cookie.Get(c, "cartList", &cartList)
 		if len(cartList) > 0 {
 			for i := 0; i < len(cartList); i++ {
 				if cartList[i].Id == goodsID && cartList[i].GoodsAttr == goodsAttr && cartList[i].GoodsColor == goodsColor {
@@ -261,7 +261,7 @@ func ChangeOneCart(c *gin.Context) {
 					Allprice += cartList[i].Price * float64(cartList[i].Num)
 				}
 			}
-			models.Cookie.Set(c, "cartList", cartList)
+			logic.Cookie.Set(c, "cartList", cartList)
 			response = gin.H{
 				"success":  true,
 				"message":  "更新数据成功",
@@ -288,7 +288,7 @@ func ChangeAllCart(c *gin.Context) {
 	var response gin.H
 
 	cartList := []models.Cart{}
-	models.Cookie.Get(c, "cartList", &cartList)
+	logic.Cookie.Get(c, "cartList", &cartList)
 	if len(cartList) > 0 {
 		for i := 0; i < len(cartList); i++ {
 			if flag == 1 {
@@ -302,7 +302,7 @@ func ChangeAllCart(c *gin.Context) {
 
 		}
 		//重新写入数据
-		models.Cookie.Set(c, "cartList", cartList)
+		logic.Cookie.Set(c, "cartList", cartList)
 
 		response = gin.H{
 			"success":  true,
@@ -321,19 +321,16 @@ func ChangeAllCart(c *gin.Context) {
 
 //删除购物车数据
 func DelCart(c *gin.Context) {
-
 	goodsId, _ := strconv.Atoi(c.Query("goods_id"))
 	goodsColor := c.Query("goods_color")
 	GoodsAttr := ""
-
 	cartList := []models.Cart{}
-	models.Cookie.Get(c, "cartList", &cartList)
-
+	logic.Cookie.Get(c, "cartList", &cartList)
 	for i := 0; i < len(cartList); i++ {
 		if cartList[i].Id == goodsId && cartList[i].GoodsColor == goodsColor && cartList[i].GoodsAttr == GoodsAttr {
 			cartList = append(cartList[:i], cartList[(i+1):]...)
 		}
 	}
-	models.Cookie.Set(c, "cartList", cartList)
+	logic.Cookie.Set(c, "cartList", cartList)
 	c.Redirect(302, "/cart")
 }

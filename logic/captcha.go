@@ -35,7 +35,7 @@ func CaptMake() (id, b64s string, err error) {
 	lid, lb64s, lerr := captcha.Generate()
 	return lid, lb64s, lerr
 }
-func VertifyCaptcha(lid, value string) bool {
+func VerifyCaptcha(lid, value string) bool {
 	if store.Verify(lid, value, false) {
 		return true
 	} else {
