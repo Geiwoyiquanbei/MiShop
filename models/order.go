@@ -12,6 +12,7 @@ type Order struct {
 	PayType     int // 支付类型： 0 alipay    1 wechat
 	OrderStatus int // 订单状态： 0 已下单  1 已付款  2 已配货  3、发货   4、交易成功   5、退货   6、取消
 	AddTime     int
+	OrderItem   []OrderItem `gorm:"foreignKey:OrderId;reference:Id"`
 }
 
 func (Order) TableName() string {
